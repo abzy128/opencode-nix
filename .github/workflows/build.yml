@@ -2,14 +2,14 @@ name: Build and Cache
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dev ]
   pull_request:
-    branches: [ main ]
+    branches: [ dev ]
   workflow_dispatch:
   workflow_run:
     workflows: ["Check for Updates"]
     types: [completed]
-    branches: [ main ]
+    branches: [ dev ]
 
 jobs:
   build:
@@ -32,7 +32,7 @@ jobs:
           NIX_FIRST_BUILD_UID: 400
 
       - uses: cachix/cachix-action@v17
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/dev'
         with:
           name: opencode-ai
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
@@ -46,5 +46,5 @@ jobs:
           ./result/bin/opencode --help >/dev/null
 
       - name: Push to Cachix
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/dev'
         run: nix build .#opencode --json | jq -r '.[].outputs.out' | cachix push opencode-ai

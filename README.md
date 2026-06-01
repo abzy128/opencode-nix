@@ -89,7 +89,7 @@ nix build
 
 ### Maintainer setup
 
-GitHub Actions pushes successful `main` builds to Cachix. Configure this repository secret:
+GitHub Actions pushes successful `dev` builds to Cachix. Configure this repository secret:
 
 - `CACHIX_AUTH_TOKEN` — Cachix auth token with write access to the `opencode-ai` cache
 
