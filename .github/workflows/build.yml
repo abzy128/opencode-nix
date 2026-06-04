@@ -6,14 +6,9 @@ on:
   pull_request:
     branches: [ dev ]
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Check for Updates"]
-    types: [completed]
-    branches: [ dev ]
 
 jobs:
   build:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

@@ -2,7 +2,8 @@ name: Check for Updates
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    # Hourly. Avoid minute 0 because GitHub's scheduled workflows are often delayed/dropped then.
+    - cron: '37 * * * *'
   workflow_dispatch:
     inputs:
       version:
@@ -12,6 +13,10 @@ on:
 permissions:
   contents: write
   pull-requests: write
+
+concurrency:
+  group: check-for-updates
+  cancel-in-progress: true
 
 jobs:
   check-update:
@@ -52,7 +57,8 @@ jobs:
       - name: Update version
         if: steps.check.outputs.update_needed == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Configure UPDATE_TOKEN as a PAT/App token if automated PRs should trigger CI.
+          GH_TOKEN: ${{ secrets.UPDATE_TOKEN || secrets.GITHUB_TOKEN }}
         run: ./scripts/update.sh --version "${{ steps.check.outputs.new_version }}"
 
       - name: Create Pull Request
@@ -60,7 +66,7 @@ jobs:
         id: create-pr
         uses: peter-evans/create-pull-request@v8
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.UPDATE_TOKEN || secrets.GITHUB_TOKEN }}
           commit-message: "chore: update opencode to version ${{ steps.check.outputs.new_version }}"
           title: "chore: update opencode to version ${{ steps.check.outputs.new_version }}"
           body: |
@@ -76,5 +82,5 @@ jobs:
       - name: Enable Auto-Merge
         if: steps.check.outputs.update_needed == 'true' && steps.create-pr.outputs.pull-request-number
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.UPDATE_TOKEN || secrets.GITHUB_TOKEN }}
         run: gh pr merge ${{ steps.create-pr.outputs.pull-request-number }} --auto --squash --delete-branch

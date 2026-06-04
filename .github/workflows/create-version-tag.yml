@@ -9,13 +9,18 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: create-version-tag
+  cancel-in-progress: false
+
 jobs:
   create-tag:
-    if: github.event.workflow_run.conclusion == 'success'
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'dev'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
+          ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
 
       - id: version
@@ -25,7 +30,7 @@ jobs:
 
       - id: check-tag
         run: |
-          if git rev-parse "v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+          if git rev-parse -q --verify "refs/tags/v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
           else
             echo "exists=false" >> "$GITHUB_OUTPUT"
@@ -41,6 +46,7 @@ jobs:
           git push origin "v${{ steps.version.outputs.version }}"
 
       - name: Update latest tag
+        if: steps.check-tag.outputs.exists == 'false'
         run: |
           git push origin :refs/tags/latest 2>/dev/null || true
           git tag -d latest 2>/dev/null || true
