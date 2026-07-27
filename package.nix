@@ -9,24 +9,24 @@
 }:
 
 let
-  version = "1.18.6";
+  version = "1.18.7";
 
   platformMap = {
     "x86_64-linux" = {
       asset = "opencode-linux-x64.tar.gz";
-      hash = "0b9mgxf80ijfsav7gqdjc6dbba21nrs2iwp8klj60yvm16azmdxm";
+      hash = "1nn3fvxa8b91qfy0imgzwks64aivyya49vbmr6lz1glg5xnrspfb";
     };
     "aarch64-linux" = {
       asset = "opencode-linux-arm64.tar.gz";
-      hash = "1lp8ixd8yv6dld31h1wk5d6dqcasxk9dmi3k7jngj5yq5p3j8g4x";
+      hash = "1iqg1606n6fdhwa4ld2xwhvlib6zpwbbv7m0vvikx81c7i2iwybc";
     };
     "x86_64-darwin" = {
       asset = "opencode-darwin-x64.zip";
-      hash = "0nqwc6qlmv79h6z051bh9f8fgn0myc19lfllwcjh7rim6bvq2ym4";
+      hash = "0zlv4y8ffkbfvn5r3gfsbl69ckid775gjgwlrwphxa4pfvd13vpy";
     };
     "aarch64-darwin" = {
       asset = "opencode-darwin-arm64.zip";
-      hash = "1ki167v22zpx8cxhwpz5d0kp0r1ifmim68iixr082cxbaf7cy2rz";
+      hash = "019mn6p0i4mwgnm9zp00rrv21vnhjpmdlgb0w39kywb76qiyvvs7";
     };
   };
 
